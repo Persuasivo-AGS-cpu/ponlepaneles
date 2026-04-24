@@ -185,7 +185,7 @@ a:hover { color: var(--primary-hover); }
 .faq-tag-pill { display: inline-block; padding: 0.2rem 0.6rem; border-radius: 6px; background: rgba(97, 198, 17, 0.1); color: var(--primary); font-size: 0.75rem; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; flex-shrink: 0; }
 
 /* Projects Gallery */
-.gallery-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
+.gallery-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; }
 .gallery-item { position: relative; border-radius: 16px; overflow: hidden; aspect-ratio: 4/3; cursor: pointer; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
 .gallery-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
 .gallery-item:hover img { transform: scale(1.05); }
@@ -245,6 +245,7 @@ footer { border-top: 1px solid var(--border-subtle); padding: 2rem 0; text-align
   .hero h1 { text-wrap: normal; font-size: 3rem; }
   .hero-image-wrapper { max-width: 500px; margin: 0 auto; }
   .final-cta-wrapper { grid-template-columns: 1fr; gap: 3rem; }
+  .gallery-grid { grid-template-columns: repeat(2, 1fr); gap: 1rem; }
   .steps-wrapper { flex-direction: column; gap: 2rem; }
   .step-connector { display: none; }
 }
@@ -252,6 +253,5 @@ footer { border-top: 1px solid var(--border-subtle); padding: 2rem 0; text-align
   .hero h1 { font-size: 2.5rem; }
   .nav-links { display: none; }
   .trust-logos { gap: 2rem; }
-  .gallery-grid { grid-template-columns: 1fr; }
   .whatsapp-float { bottom: 20px; right: 20px; width: 50px; height: 50px; }
 }
