@@ -1,17 +1,31 @@
 import { motion, AnimatePresence } from 'framer-motion';
-import { Zap, ArrowRight, CheckCircle2, ShieldCheck, Wrench, ChevronDown, Award, Calculator, Search } from 'lucide-react';
+import { Zap, ArrowRight, CheckCircle2, ShieldCheck, Wrench, ChevronDown, Award, Calculator, Search, Upload, Home as HomeIcon, Building2, ChevronLeft } from 'lucide-react';
 import { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import Quoter from '../components/Quoter';
 
 export default function Home() {
-  const [formState, setFormState] = useState({ name: '', email: '', phone: '', subject: '', message: '' });
+  const [formStep, setFormStep] = useState(1);
+  const [formState, setFormState] = useState({ 
+    tipo: 'casa',
+    consumo: '',
+    name: '', 
+    email: '', 
+    phone: '', 
+    receiptFile: null as File | null 
+  });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [activeFaq, setActiveFaq] = useState<number | null>(null);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormState({ ...formState, [e.target.name]: e.target.value });
+  };
+  
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      setFormState({ ...formState, receiptFile: e.target.files[0] });
+    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -272,20 +286,99 @@ export default function Home() {
                     <p style={{ color: 'var(--text-secondary)' }}>Te contactaremos lo más rápido posible.</p>
                   </motion.div>
                 ) : (
-                  <form onSubmit={handleSubmit}>
-                    <h3 style={{ marginBottom: '1.5rem', fontSize: '1.5rem' }}>Déjanos tus datos</h3>
-                    <div className="form-group">
-                      <input type="text" id="name" name="name" required className="form-control" value={formState.name} onChange={handleInputChange} placeholder="Nombre Completo" />
+                  <form onSubmit={handleSubmit} className="multi-step-form">
+                    <div className="form-steps-indicator">
+                      <div className={`step-dot ${formStep >= 1 ? 'active' : ''}`}></div>
+                      <div className={`step-dot ${formStep >= 2 ? 'active' : ''}`}></div>
+                      <div className={`step-dot ${formStep >= 3 ? 'active' : ''}`}></div>
                     </div>
-                    <div className="form-group">
-                      <input type="tel" id="phone" name="phone" pattern="[0-9]{10}" required className="form-control" value={formState.phone} onChange={handleInputChange} placeholder="Teléfono a 10 dígitos" />
-                    </div>
-                    <div className="form-group">
-                      <input type="email" id="email" name="email" required className="form-control" value={formState.email} onChange={handleInputChange} placeholder="Correo Electrónico" />
-                    </div>
-                    <button type="submit" className="btn-primary form-submit" disabled={isSubmitting}>
-                      {isSubmitting ? 'Procesando...' : 'Quiero mi Cotización'} <ArrowRight size={20} />
-                    </button>
+
+                    <AnimatePresence mode="wait">
+                      {formStep === 1 && (
+                        <motion.div key="step1" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
+                          <h3 style={{ marginBottom: '0.5rem', fontSize: '1.5rem' }}>Perfil de Proyecto</h3>
+                          <p style={{ color: 'var(--text-secondary)', marginBottom: '1.5rem', fontSize: '0.95rem' }}>Ayúdanos a perfilar tu cotización.</p>
+                          
+                          <div className="form-group">
+                            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600 }}>¿Dónde instalarás tus paneles?</label>
+                            <div style={{ display: 'flex', gap: '1rem' }}>
+                              <button type="button" onClick={() => setFormState({...formState, tipo: 'casa'})} className={`btn-outline type-btn ${formState.tipo === 'casa' ? 'active' : ''}`}>
+                                <HomeIcon size={20} /> Casa
+                              </button>
+                              <button type="button" onClick={() => setFormState({...formState, tipo: 'negocio'})} className={`btn-outline type-btn ${formState.tipo === 'negocio' ? 'active' : ''}`}>
+                                <Building2 size={20} /> Negocio
+                              </button>
+                            </div>
+                          </div>
+                          
+                          <div className="form-group" style={{ marginTop: '1.5rem' }}>
+                            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600 }}>¿Cuánto pagas de luz aprox? <span style={{ color: 'var(--text-secondary)', fontWeight: 400 }}>(Opcional)</span></label>
+                            <input type="number" name="consumo" className="form-control" value={formState.consumo} onChange={handleInputChange} placeholder="$ Ej. 5000" />
+                          </div>
+                          
+                          <button type="button" onClick={() => setFormStep(2)} className="btn-primary form-submit" style={{ marginTop: '1rem' }}>
+                            Siguiente Paso <ArrowRight size={20} />
+                          </button>
+                        </motion.div>
+                      )}
+
+                      {formStep === 2 && (
+                        <motion.div key="step2" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
+                          <h3 style={{ marginBottom: '0.5rem', fontSize: '1.5rem' }}>Tus Datos</h3>
+                          <p style={{ color: 'var(--text-secondary)', marginBottom: '1.5rem', fontSize: '0.95rem' }}>¿A dónde enviamos tu propuesta?</p>
+                          
+                          <div className="form-group">
+                            <input type="text" name="name" required className="form-control" value={formState.name} onChange={handleInputChange} placeholder="Nombre Completo" />
+                          </div>
+                          <div className="form-group">
+                            <input type="tel" name="phone" pattern="[0-9]{10}" required className="form-control" value={formState.phone} onChange={handleInputChange} placeholder="Teléfono a 10 dígitos" />
+                          </div>
+                          <div className="form-group">
+                            <input type="email" name="email" required className="form-control" value={formState.email} onChange={handleInputChange} placeholder="Correo Electrónico" />
+                          </div>
+                          
+                          <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
+                            <button type="button" onClick={() => setFormStep(1)} className="btn-outline" style={{ padding: '0 1rem' }}>
+                              <ChevronLeft size={20} />
+                            </button>
+                            <button type="button" onClick={() => {
+                              // Simple validation before going to next step
+                              if(formState.name && formState.phone && formState.email) setFormStep(3);
+                              else alert('Por favor llena tus datos de contacto.');
+                            }} className="btn-primary form-submit" style={{ flex: 1 }}>
+                              Siguiente <ArrowRight size={20} />
+                            </button>
+                          </div>
+                        </motion.div>
+                      )}
+
+                      {formStep === 3 && (
+                        <motion.div key="step3" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
+                          <h3 style={{ marginBottom: '0.5rem', fontSize: '1.5rem' }}>Tu Recibo (Opcional)</h3>
+                          <p style={{ color: 'var(--text-secondary)', marginBottom: '1.5rem', fontSize: '0.95rem' }}>Sube tu recibo para darte una cotización 100% exacta y lista para firmar.</p>
+                          
+                          <div className="form-group">
+                            <label className="file-upload-zone">
+                              <Upload size={32} color="var(--primary)" style={{ marginBottom: '0.5rem' }} />
+                              <span style={{ fontWeight: 600 }}>Toca para subir o toma una foto</span>
+                              <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
+                                {formState.receiptFile ? formState.receiptFile.name : 'Formatos: PDF, JPG, PNG'}
+                              </span>
+                              <input type="file" accept="image/*,.pdf" onChange={handleFileChange} style={{ display: 'none' }} />
+                            </label>
+                          </div>
+                          
+                          <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
+                            <button type="button" onClick={() => setFormStep(2)} className="btn-outline" style={{ padding: '0 1rem' }}>
+                              <ChevronLeft size={20} />
+                            </button>
+                            <button type="submit" className="btn-primary form-submit" disabled={isSubmitting} style={{ flex: 1 }}>
+                              {isSubmitting ? 'Enviando...' : 'Obtener Cotización'} <CheckCircle2 size={20} />
+                            </button>
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
                   </form>
                 )}
               </div>
